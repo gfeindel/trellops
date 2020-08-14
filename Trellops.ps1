@@ -55,7 +55,9 @@ function Get-TrelloActions {
         [parameter(ParameterSetName="Board")]
         [string]$BoardId,
         [parameter(ParameterSetName="Card")]
-        [string]$CardId
+        [string]$CardId,
+        [parameter(ParameterSetName="List")]
+        [string]$ListId
         #To do: Add support for filtering by before/since
     )
     $uri = ""
@@ -66,6 +68,9 @@ function Get-TrelloActions {
         }
         "Card" {
             $uri = "/cards/$CardId/actions"
+        }
+        "List" {
+            $uri = "/lists/$ListId/actions"
         }
     }
     $result = Invoke-TrelloApi -apiCall $uri

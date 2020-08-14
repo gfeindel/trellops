@@ -20,8 +20,6 @@ param(
     [string]$WaitingListId
 )
 
-. .\scripts\Trello\Trellops.ps1
-
 $doneCards = Get-TrelloListCards -ListId $DoneListId
 $unixEpoch = [datetime]'1/1/1970 12:00am'
 

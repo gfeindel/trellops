@@ -25,11 +25,11 @@ $cards |ForEach-Object {
     }
     $o.TeamMembers = [string]::Join(', ',$_.members.initials)
 
-    if([int]($_.badges.checkItems) -gt 0) {
-        if($_.badges.checkItemsChecked -eq $_.badges.checkItems -or $_.dueComplete) {
-            $o.Progress = "Complete"
-        } else {
-            $o.Progress = "$($_.badges.checkItemsChecked)/$($_.badges.checkItems)"
+    if($_.dueComplete) {
+        $o.Progress = "Complete"
+    } else {
+        if([int]($_.badges.checkItems) -gt 0) {
+            $o.Progress = "In Progress ($($_.badges.checkItemsChecked)/$($_.badges.checkItems))"
         }
     }
 
@@ -43,6 +43,7 @@ $cards |ForEach-Object {
     if($lastUpdate) {
         $d = ([datetime]($lastUpdate.date)).ToString("MM/dd")
         $o.Status = "${d} $($lastUpdate.data.text)"
+        $o.Status = $o.Status -replace "`n"," "
     }
     $o
 }

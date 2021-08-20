@@ -7,9 +7,10 @@ param(
 )
 
 $lists = Get-TrelloBoardLists -BoardId $BoardId
+$unixEpoch = [datetime]'1/1/1970 12:00am'
 
 $lists |% {
-    $cards = Get-TrelloListCards -ListId $_.id
+    $cards = Get-TrelloListCards -ListId $_.id -Members
 
     foreach($card in $cards) {
         $d = [datetime]::MinValue
@@ -18,19 +19,20 @@ $lists |% {
             $d = [datetime]($card.due)
         }
         $o = [pscustomobject]@{
+            Id = $card.id
             Name = $card.Name
-            Due = $d.ToShortDateString()
-            Sprint = $d.Month
+            Description = $card.desc
             List = $_.Name
-            Effort = 0
-            Priority = ""
-            Labels = @()
+            Labels = ""
+            Members = ""
+            Created = ($unixEpoch.AddSeconds([Convert]::ToInt64($card.id.Substring(0,8),16))).ToLocalTime()
+            LastActivity = [datetime]($card.dateLastActivity)
         }
         if($card.labels) {
             $o.Labels = [string]::Join(',',$card.labels.name)
-            foreach($label in $card.labels) {
-                if($label.name -in ('A','B','C','D')) { $o.Priority = $label.name}
-            }
+        }
+        if($card.members) {
+            $o.Members = [string]::Join(',',$card.members.initials)
         }
         if($card.name -match "\(\d+\)") {
             $o.Effort = [int](($card.Name | Select-String -Pattern "\((\d+)\)").Matches[0].Groups[1].Value)

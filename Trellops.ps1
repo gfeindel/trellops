@@ -125,8 +125,9 @@ function Get-TrelloListCards {
     param(
         [string]$ListId,
         [switch]$Members = $false
+        [switch]$Description = $false
     )
-    $params = "members=false"
+    $params = "members=false,desc=true"
     if($Members) {
         $params = "members=true"
     }
